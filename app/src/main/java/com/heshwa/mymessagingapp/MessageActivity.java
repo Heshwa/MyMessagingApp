@@ -48,8 +48,9 @@ public class MessageActivity extends AppCompatActivity {
     private ImageButton btnSend;
     private FirebaseAuth mAuth;
     private RecyclerView mRecyclerView;
-    private ArrayList<String> messages;
+    public static ArrayList<String> messages;
     public static ArrayList<Integer> messagePosition;
+    public static ArrayList<String> messageIds;
     private MessageAdapter mMessageAdapter;
 
 
@@ -75,8 +76,10 @@ public class MessageActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
         messages = new ArrayList<>();
         messagePosition = new ArrayList<>();
+        messageIds = new ArrayList<>();
         mMessageAdapter= new MessageAdapter(MessageActivity.this,messages);
         mRecyclerView.setAdapter(mMessageAdapter);
+
 
         getLastSeen();
         getMessages();
@@ -106,6 +109,7 @@ public class MessageActivity extends AppCompatActivity {
                 }
             }
         });
+
 
 
 
@@ -168,6 +172,8 @@ public class MessageActivity extends AppCompatActivity {
                         messages.add(snapshot.child("Message").getValue().toString());
                         messagePosition.add(1);
                         mMessageAdapter.notifyItemChanged(messages.size()-1);
+                        messageIds.add(snapshot.getKey());
+                        mRecyclerView.smoothScrollToPosition(messages.size()-1);
                     }
                     else if(snapshot.child("ReceiverId").getValue().toString().equals(mAuth.getCurrentUser().getUid())
                             && snapshot.child("SenderId").getValue().toString().equals(receiverId))
@@ -175,6 +181,8 @@ public class MessageActivity extends AppCompatActivity {
                         messages.add(snapshot.child("Message").getValue().toString());
                         messagePosition.add(0);
                         mMessageAdapter.notifyItemChanged(messages.size()-1);
+                        messageIds.add(snapshot.getKey());
+                        mRecyclerView.smoothScrollToPosition(messages.size()-1);
                     }
                 }
 
@@ -187,6 +195,17 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                if((snapshot.child("ReceiverId").getValue().toString().equals(receiverId)
+                        && snapshot.child("SenderId").getValue().toString().equals(mAuth.getCurrentUser().getUid()))
+                || (snapshot.child("ReceiverId").getValue().toString().equals(mAuth.getCurrentUser().getUid())
+                        && snapshot.child("SenderId").getValue().toString().equals(receiverId))) {
+                    int pos = messageIds.indexOf(snapshot.getKey());
+                    messagePosition.remove(pos);
+                    messages.remove(pos);
+                    messageIds.remove(pos);
+                    mMessageAdapter.notifyItemRemoved(pos);
+                }
+
 
             }
 

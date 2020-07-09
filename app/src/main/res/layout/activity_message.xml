@@ -38,7 +38,7 @@
                     android:layout_height="match_parent"
                     android:fontFamily="@font/abril_fatface"
                     android:text=""
-                    android:textColor="#FF5722"
+                    android:textColor="#ffff"
                     android:textSize="24sp"
                     android:textStyle="bold|italic" />
 
@@ -48,7 +48,8 @@
                     android:layout_height="match_parent"
                     android:fontFamily="@font/abril_fatface"
                     android:text="last Seen:"
-                    android:textColor="#FF5722"
+                    android:textColor="#ffff
+"
                     android:textSize="14sp"
                     android:textStyle="bold|italic" />
             </LinearLayout>
@@ -92,13 +93,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/linearBottom"
         android:layout_below="@+id/appbar"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="-1dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="10dp"
         android:id="@+id/recycularViewMessages"/>
 
 
