@@ -30,6 +30,7 @@ public class ChatListFragment extends Fragment {
     private ChatListAdapter mChatListAdapter;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
+    public  ArrayList<String> ids;
 
 
 
@@ -46,11 +47,13 @@ public class ChatListFragment extends Fragment {
         recycularViewChatList = view.findViewById(R.id.recycularViewChatList);
         namesList = new ArrayList<>();
         lastSeenList = new ArrayList<>();
-        mChatListAdapter = new ChatListAdapter(getContext(),namesList,lastSeenList);
+        ids = new ArrayList<>();
+        mChatListAdapter = new ChatListAdapter(getContext(),namesList,lastSeenList,ids);
         recycularViewChatList.setAdapter(mChatListAdapter);
         recycularViewChatList.setLayoutManager(new LinearLayoutManager(getContext()));
         mAuth= FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
 
         userRef.child(mAuth.getCurrentUser().getUid()).child("ChatLists")
                 .orderByValue().addChildEventListener(new ChildEventListener() {
@@ -59,11 +62,13 @@ public class ChatListFragment extends Fragment {
                 if(snapshot.exists())
                 {
                     String usernameid = snapshot.getKey();
+
                     userRef.child(usernameid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if(snapshot.exists() && snapshot.hasChild("Name"))
                             {
+                                ids.add(0,snapshot.getKey());
                                 namesList.add(0,snapshot.child("Name").getValue().toString());
                                 if(snapshot.child("Status").hasChild("Online"))
                                 {
@@ -91,16 +96,18 @@ public class ChatListFragment extends Fragment {
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 if(snapshot.exists())
                 {
-                    String usernameid = snapshot.getKey();
+                    final String usernameid = snapshot.getKey();
                     userRef.child(usernameid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if(snapshot.exists() && snapshot.hasChild("Name"))
                             {
-                                int index =namesList.indexOf(snapshot.child("Name").getValue().toString());
+                                int index =ids.indexOf(usernameid);
                                 namesList.remove(index);
                                 lastSeenList.remove(index);
+                                ids.remove(index);
                                 mChatListAdapter.notifyItemRemoved(index);
+                                ids.add(0,usernameid);
                                 namesList.add(0,snapshot.child("Name").getValue().toString());
 
                                 if(snapshot.child("Status").hasChild("Online"))
@@ -111,7 +118,7 @@ public class ChatListFragment extends Fragment {
                                 {
                                     lastSeenList.add(0,"Offline");
                                 }
-                                mChatListAdapter.notifyItemInserted(0);
+                                mChatListAdapter.notifyDataSetChanged();
 
 
                             }
@@ -141,6 +148,7 @@ public class ChatListFragment extends Fragment {
 
             }
         });
+
 
 
 

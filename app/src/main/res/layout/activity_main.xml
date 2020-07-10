@@ -20,7 +20,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/profile_image"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/logo"
                 />
 
             <TextView
@@ -38,7 +38,8 @@
         <com.google.android.material.tabs.TabLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/tabLayout"/>
+            android:id="@+id/tabLayout"
+            app:tabTextColor="#ffff"/>
 
 
     </com.google.android.material.appbar.AppBarLayout>

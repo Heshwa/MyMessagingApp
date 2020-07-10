@@ -1,10 +1,12 @@
 package com.heshwa.mymessagingapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
@@ -18,12 +20,18 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     private Context mContext;
     private ArrayList<String> names;
     private ArrayList<String> lastseen;
+    private ArrayList<String> ids;
 
-    public ChatListAdapter(Context context, ArrayList<String> names, ArrayList<String> lastseen) {
+    public ChatListAdapter(Context context, ArrayList<String> names, ArrayList<String> lastseen, ArrayList<String> ids) {
         mContext = context;
         this.names = names;
         this.lastseen = lastseen;
+        this.ids = ids;
     }
+
+
+
+
 
     @NonNull
     @Override
@@ -33,9 +41,18 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull  ChatListAdapter.ViewHolder holder, final int position) {
         holder.txtName.setText(names.get(position));
         holder.txtLastSeen.setText(lastseen.get(position));
+        holder.txtName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, MessageActivity.class);
+                intent.putExtra("ReceiverId",ids.get(position));
+                intent.putExtra("ReceiverName",names.get(position));
+                mContext.startActivity(intent);
+            }
+        });
 
     }
 
@@ -52,4 +69,5 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             txtName = itemView.findViewById(R.id.txtUserName);
         }
     }
+
 }
