@@ -21,13 +21,14 @@ public class TabAdapter extends FragmentPagerAdapter {
         {
             case 0:return new ChatListFragment();
             case 1: return new SearchFragment();
+            case 2: return new ProfileFragment();
             default: return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Nullable
@@ -37,6 +38,7 @@ public class TabAdapter extends FragmentPagerAdapter {
         {
             case 0: return "Chats";
             case 1: return "Users";
+            case 2: return "Profile";
             default: return  null;
         }
     }
