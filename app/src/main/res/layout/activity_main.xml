@@ -30,7 +30,7 @@
                 android:fontFamily="@font/abril_fatface"
                 android:padding="10dp"
                 android:text="Hello"
-                android:textColor="#FF5722"
+                android:textColor="#ffff"
                 android:textSize="24sp"
                 android:textStyle="bold|italic" />
 
