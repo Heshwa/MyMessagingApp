@@ -1,5 +1,6 @@
 package com.heshwa.mymessagingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -24,10 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class ChatListFragment extends Fragment {
-    private RecyclerView recycularViewChatList;
+    private ListView listView;
     private ArrayList<String> namesList;
-    private  ArrayList<String> lastSeenList;
-    private ChatListAdapter mChatListAdapter;
+    private ArrayAdapter mArrayAdapter;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
     public  ArrayList<String> ids;
@@ -44,15 +46,23 @@ public class ChatListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
-        recycularViewChatList = view.findViewById(R.id.recycularViewChatList);
+        listView = view.findViewById(R.id.ListviewChatList);
         namesList = new ArrayList<>();
-        lastSeenList = new ArrayList<>();
         ids = new ArrayList<>();
-        mChatListAdapter = new ChatListAdapter(getContext(),namesList,lastSeenList,ids);
-        recycularViewChatList.setAdapter(mChatListAdapter);
-        recycularViewChatList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mArrayAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,namesList);
+        listView.setAdapter(mArrayAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), MessageActivity.class);
+                intent.putExtra("ReceiverId",ids.get(position));
+                intent.putExtra("ReceiverName",namesList.get(position));
+                startActivity(intent);
+            }
+        });
         mAuth= FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
 
 
         userRef.child(mAuth.getCurrentUser().getUid()).child("ChatLists")
@@ -70,15 +80,7 @@ public class ChatListFragment extends Fragment {
                             {
                                 ids.add(0,snapshot.getKey());
                                 namesList.add(0,snapshot.child("Name").getValue().toString());
-                                if(snapshot.child("Status").hasChild("Online"))
-                                {
-                                    lastSeenList.add(0,"Online");
-                                }
-                                else
-                                {
-                                    lastSeenList.add(0,"Offline");
-                                }
-                                mChatListAdapter.notifyItemInserted(0);
+                                mArrayAdapter.notifyDataSetChanged();
 
                             }
                         }
@@ -104,21 +106,11 @@ public class ChatListFragment extends Fragment {
                             {
                                 int index =ids.indexOf(usernameid);
                                 namesList.remove(index);
-                                lastSeenList.remove(index);
                                 ids.remove(index);
-                                mChatListAdapter.notifyItemRemoved(index);
                                 ids.add(0,usernameid);
                                 namesList.add(0,snapshot.child("Name").getValue().toString());
 
-                                if(snapshot.child("Status").hasChild("Online"))
-                                {
-                                    lastSeenList.add(0,"Online");
-                                }
-                                else
-                                {
-                                    lastSeenList.add(0,"Offline");
-                                }
-                                mChatListAdapter.notifyDataSetChanged();
+                                mArrayAdapter.notifyDataSetChanged();
 
 
                             }
