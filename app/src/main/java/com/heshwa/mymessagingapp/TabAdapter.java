@@ -19,14 +19,15 @@ public class TabAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position)
         {
-            case 0: return new SearchFragment();
+            case 0:return new ChatListFragment();
+            case 1: return new SearchFragment();
             default: return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 1;
+        return 2;
     }
 
     @Nullable
@@ -34,7 +35,8 @@ public class TabAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position)
         {
-            case 0: return "Search";
+            case 1: return "Chats";
+            case 0: return "Users";
             default: return  null;
         }
     }
