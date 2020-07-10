@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -31,44 +33,33 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
     private TextView txtdiplayUserName;
     private DatabaseReference userRef;
-    private ListView mListView;
-    private ArrayList<String> userArrayList;
-    private static ArrayList<String> userIds;
-    private ArrayAdapter mArrayAdapter;
     private FirebaseAuth mAuth;
     private Toolbar mToolbar;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private TabAdapter mTabAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mListView = findViewById(R.id.listViewUsers);
+
         txtdiplayUserName = findViewById(R.id.txtDisplayName);
-        userArrayList = new ArrayList<>();
-        userIds = new ArrayList<>();
-        mArrayAdapter = new ArrayAdapter(MainActivity.this,android.R.layout.simple_list_item_1,userArrayList);
-        mListView.setAdapter(mArrayAdapter);
+
+
+
+
+        mTabLayout = findViewById(R.id.tabLayout);
+        mViewPager = findViewById(R.id.viewPager);
+        mTabAdapter = new TabAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mTabAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+
         mToolbar = findViewById(R.id.toolBar);
         setSupportActionBar(mToolbar);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
-                intent.putExtra("ReceiverId",userIds.get(position));
-                intent.putExtra("ReceiverName",userArrayList.get(position));
-                startActivity(intent);
 
-
-
-            }
-        });
 
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setTitle("Getting Users");
-        progressDialog.setMessage("please wait");
-        progressDialog.show();
         mAuth = FirebaseAuth.getInstance();
         userRef.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -86,39 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        userRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                if(snapshot.exists() && snapshot!= null && !snapshot.getKey().equals(mAuth.getCurrentUser().getUid()))
-                {
-                    userArrayList.add(snapshot.child("Name").getValue().toString());
-                    userIds.add(snapshot.getKey());
-                }
-                mArrayAdapter.notifyDataSetChanged();
-                progressDialog.dismiss();
 
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
 
 

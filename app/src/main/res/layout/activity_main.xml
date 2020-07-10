@@ -35,25 +35,20 @@
                 android:textStyle="bold|italic" />
 
         </androidx.appcompat.widget.Toolbar>
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tabLayout"/>
 
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center_horizontal"
-        android:text="Users"
-        android:textColor="#3F51B5"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
-    <ListView
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        android:id="@+id/listViewUsers">
-    </ListView>
+        android:id="@+id/viewPager"/>
+
+
+
 
 
 
